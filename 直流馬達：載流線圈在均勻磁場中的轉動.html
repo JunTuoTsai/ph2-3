@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>直流馬達：載流線圈在均勻磁場中的轉動</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f6f2;--card:#fff;--tx:#1d1f23;--mu:#6b7280;--bd:#dcdcd4;--B:#2563eb;--I:#dc2626;--F:#16a34a;--T:#d97706}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14161a;--card:#1e2126;--tx:#e8eaed;--mu:#9aa0a8;--bd:#363a41;--B:#60a5fa;--I:#f87171;--F:#4ade80;--T:#fbbf24;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14161a;--card:#1e2126;--tx:#e8eaed;--mu:#9aa0a8;--bd:#363a41;--B:#60a5fa;--I:#f87171;--F:#4ade80;--T:#fbbf24;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;line-height:1.6}
+.w{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:1.25rem;margin:4px 0}
+.sub{color:var(--mu);font-size:.9rem;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:10px;margin-bottom:12px}
+canvas{width:100%;height:auto;display:block}
+.lg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.88rem;margin:4px 2px}
+.lg i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.ctl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 18px;font-size:.92rem}
+.ctl label{display:flex;flex-direction:column;gap:2px}
+.ctl input[type=range]{width:100%}
+button{font:inherit;padding:6px 14px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx);cursor:pointer}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.ro{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;font-size:.92rem}
+.ro div{background:var(--bg);border-radius:8px;padding:6px 10px}
+.ro b{display:block;font-size:1.05rem}
+.note{font-size:.9rem;color:var(--mu)}
+.note b{color:var(--tx)}
+</style></head><body><div class="w">
+<h1>直流馬達：載流線圈在均勻磁場中的轉動</h1>
+<p class="sub">選修物理四 2-3　載流導線在磁場中所受磁力　（剖面圖：轉軸垂直紙面，磁場 B 水平向右）</p>
+<div class="card"><canvas id="c" width="640" height="400"></canvas>
+<div class="lg"><span><i style="background:var(--B)"></i>磁場 B（→）</span><span><i style="background:var(--I)"></i>電流 I（⊙ 出紙面／⊗ 入紙面）</span><span><i style="background:var(--F)"></i>磁力 F = N·I·L×B</span><span><i style="background:var(--T)"></i>力臂 d 與力矩 τ</span></div></div>
+<div class="card"><div class="ctl">
+<div class="row"><button id="pl">暫停</button><button id="rs">重設</button></div>
+<label><span>線圈角度 φ（線圈平面與 B 的夾角）：<b id="pv"></b></span><input id="ph" type="range" min="0" max="360" step="1" value="30"></label>
+<label><span>摩擦阻尼 b：<b id="sv"></b> N·m·s/rad</span><input id="sp" type="range" min="0.005" max="0.1" step="0.005" value="0.03"></label>
+<label><span>電流 I：<b id="iv"></b> A</span><input id="I" type="range" min="1" max="5" step="0.5" value="2"></label>
+<label><span>磁場 B：<b id="bv"></b> T</span><input id="B" type="range" min="0.1" max="1" step="0.1" value="0.5"></label>
+<label class="row"><input id="comm" type="checkbox" checked>使用換向器（每半圈自動反向電流）</label>
+</div></div>
+<div class="card"><div class="ro">
+<div>邊 ab：電流／磁力<b id="sa"></b></div><div>邊 cd：電流／磁力<b id="sc"></b></div>
+<div>每邊磁力大小 F<b id="fv"></b></div><div>力矩 τ<b id="tv"></b></div><div>角速度 ω<b id="wv"></b></div></div></div>
+<div class="card"><canvas id="g" width="640" height="170"></canvas></div>
+<div class="card note">
+<p><b>重點觀察：</b>線圈兩長邊的電流方向相反，所受磁力 F = N·B·I·L 大小相同、方向相反（形成力偶）。F 大小不變，但力臂 d = (w/2)·cosφ 隨角度改變，所以力矩 <b>τ = N·B·I·A·cosφ</b> 隨角度變化——線圈平面與 B 平行（φ = 0°）時最大，與 B 垂直（φ = 90°，中性面）時為零。</p>
+<p>過了中性面若電流不反向，力矩會變成反方向（試著關掉換向器）；換向器在此瞬間使電流反向，力矩方向維持不變，線圈得以持續朝同一方向轉動，但力矩大小仍呈 |cosφ| 的週期變化。動畫由力矩真正驅動線圈（轉動慣量 J = 0.01 kg·m²，摩擦阻尼 b 可調）：關閉換向器時，線圈會繞中性面來回擺動，最後停在 φ = 90°；開啟後則加速到穩定轉速。停住後按「重設」可重新開始。（此處取 N = 10 匝、長邊 L = 0.2 m、線圈面積 A = 0.02 m²。）</p></div>
+</div>
+<script>
+const $=id=>document.getElementById(id),cv=$('c'),g=cv.getContext('2d'),cg=$('g'),h=cg.getContext('2d');
+const dpr=Math.min(window.devicePixelRatio||1,2);
+[[cv,640,400,g],[cg,640,170,h]].forEach(([e,w,hh,x])=>{e.width=w*dpr;e.height=hh*dpr;x.scale(dpr,dpr)});
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const N=10,L=0.2,A=0.02;let phi=Math.PI/6,omega=0,play=true,last=0;
+function head(c,x,y,tx,ty,col,s=9){const m=Math.hypot(tx,ty)||1;tx/=m;ty/=m;c.fillStyle=col;c.beginPath();c.moveTo(x+tx*s,y+ty*s);c.lineTo(x-tx*s*.5-ty*s*.6,y-ty*s*.5+tx*s*.6);c.lineTo(x-tx*s*.5+ty*s*.6,y-ty*s*.5-tx*s*.6);c.closePath();c.fill()}
+function arrow(c,x1,y1,x2,y2,col,w=3){c.strokeStyle=col;c.lineWidth=w;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();head(c,x2,y2,x2-x1,y2-y1,col)}
+function wire(x,y,out,col,card){g.fillStyle=card;g.strokeStyle=col;g.lineWidth=2;g.beginPath();g.arc(x,y,13,0,7);g.fill();g.stroke();g.fillStyle=col;
+ if(out){g.beginPath();g.arc(x,y,4,0,7);g.fill()}else{g.beginPath();g.moveTo(x-7,y-7);g.lineTo(x+7,y+7);g.moveTo(x+7,y-7);g.lineTo(x-7,y+7);g.stroke()}}
+function draw(){
+ const cB=css('--B'),cI=css('--I'),cF=css('--F'),cT=css('--T'),tx=css('--tx'),mu=css('--mu'),card=css('--card');
+ const B=+$('B').value,I=+$('I').value,comm=$('comm').checked;
+ const co=Math.cos(phi),si=Math.sin(phi),s=comm?(co>=0?1:-1):1;
+ const F=N*B*I*L,tmax=N*B*I*A,tau=comm?tmax*Math.abs(co):tmax*co;
+ const cx=300,cy=200,r=105;
+ g.clearRect(0,0,640,400);g.font="14px sans-serif";g.textBaseline="middle";
+ // B field
+ g.globalAlpha=.4;for(let y=40;y<=360;y+=40){g.strokeStyle=cB;g.lineWidth=1+B*1.5;g.beginPath();g.moveTo(20,y);g.lineTo(620,y);g.stroke();[110,500,615].forEach(x=>head(g,x,y,1,0,cB,8))}
+ g.globalAlpha=1;g.fillStyle=cB;g.fillText("B →（均勻磁場，向右）",20,18);
+ const x1=cx+r*co,y1=cy-r*si,x2=cx-r*co,y2=cy+r*si;
+ // lever arms
+ g.setLineDash([5,4]);g.strokeStyle=cT;g.lineWidth=1.5;
+ [[x1,y1],[x2,y2]].forEach(([x,y])=>{g.beginPath();g.moveTo(cx,cy);g.lineTo(x,cy);g.lineTo(x,y);g.stroke()});g.setLineDash([]);
+ g.fillStyle=cT;if(Math.abs(co)>.25){g.fillText("d",(cx+x1)/2,cy+(co>0?16:-16)*(1));}
+ // coil
+ g.strokeStyle=tx;g.lineWidth=6;g.lineCap="round";g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();g.lineCap="butt";
+ g.fillStyle=tx;g.beginPath();g.arc(cx,cy,5,0,7);g.fill();
+ // currents (side1 = ab, side2 = cd)
+ wire(x1,y1,s>0,cI,card);wire(x2,y2,s<0,cI,card);
+ // forces
+ const len=12+6*F;
+ arrow(g,x1,y1-s*15,x1,y1-s*(15+len),cF);arrow(g,x2,y2+s*15,x2,y2+s*(15+len),cF);
+ g.fillStyle=cF;g.fillText("F",x1+10,y1-s*(15+len/2));g.fillText("F",x2+10,y2+s*(15+len/2));
+ g.fillStyle=mu;g.fillText("a b",x1+(co>=0?22:-40),y1);g.fillText("c d",x2+(co>=0?-40:22),y2);
+ // torque arc
+ if(Math.abs(tau)>tmax*0.03){const sg=tau>0?-1:1,span=Math.max(.5,4.6*Math.abs(tau)/tmax),R=48,a0=-.4*sg*0+0.3;
+  const ea=a0+sg*span;g.strokeStyle=cT;g.lineWidth=5;g.beginPath();g.arc(cx,cy,R,a0,ea,sg<0);g.stroke();
+  head(g,cx+R*Math.cos(ea),cy+R*Math.sin(ea),-sg*Math.sin(ea),sg*Math.cos(ea),cT,13);
+  g.fillStyle=cT;g.fillText(tau>0?"τ（逆時針）":"τ（順時針）",cx+R+12,cy+R*0.9)}
+ else{g.fillStyle=cT;g.fillText("τ ≈ 0（中性面）",cx+58,cy+52)}
+ // commutator schematic
+ const mx=570,my=70,mr=26;g.fillStyle=mu;g.fillText(comm?"換向器":"滑環（無換向）",mx-34,my-42);
+ if(comm){[[0,cI],[Math.PI,cF]].forEach(([o,col],i)=>{g.strokeStyle=col;g.lineWidth=9;g.beginPath();g.arc(mx,my,mr,-phi+o-Math.PI/2+.12,-phi+o+Math.PI/2-.12);g.stroke()})}
+ else{g.strokeStyle=cI;g.lineWidth=9;g.beginPath();g.arc(mx,my,mr,0,7);g.stroke()}
+ g.fillStyle=tx;g.fillRect(mx+mr+5,my-4,14,8);g.fillRect(mx-mr-19,my-4,14,8);
+ g.fillText("＋",mx+mr+8,my-15);g.fillText("－",mx-mr-18,my-15);
+ // graph
+ const c=h,gw=640,gh=170,l=46,rr=12,t=14,b=28,pw=gw-l-rr,ph=gh-t-b,X=d=>l+pw*d/360,Y=v=>t+ph*(1-(v+1)/2);
+ c.clearRect(0,0,gw,gh);c.font="12px sans-serif";c.textBaseline="middle";c.fillStyle=mu;c.strokeStyle=mu;c.lineWidth=1;
+ c.beginPath();c.moveTo(l,Y(0));c.lineTo(l+pw,Y(0));c.moveTo(l,t);c.lineTo(l,t+ph);c.stroke();
+ c.setLineDash([3,4]);[90,270].forEach(d=>{c.beginPath();c.moveTo(X(d),t);c.lineTo(X(d),t+ph);c.stroke()});c.setLineDash([]);
+ [0,90,180,270,360].forEach(d=>c.fillText(d+"°",X(d)-10,gh-12));
+ c.fillText("+τmax",2,Y(1));c.fillText("0",30,Y(0));c.fillText("−τmax",2,Y(-1));
+ c.fillText("τ–φ 圖（虛線：中性面 90°、270°）",l+6,t+2);
+ c.strokeStyle=cT;c.lineWidth=2.5;c.beginPath();for(let d=0;d<=360;d++){const v=comm?Math.abs(Math.cos(d*Math.PI/180)):Math.cos(d*Math.PI/180);d?c.lineTo(X(d),Y(v)):c.moveTo(X(d),Y(v))}c.stroke();
+ const pd=((phi*180/Math.PI)%360+360)%360;c.fillStyle=cI;c.beginPath();c.arc(X(pd),Y(tau/tmax),6,0,7);c.fill();
+ // readouts
+ $('pv').textContent=pd.toFixed(0)+"°";$('sv').textContent=(+$('sp').value).toFixed(3);$('wv').textContent=omega.toFixed(1)+" rad/s";$('iv').textContent=I;$('bv').textContent=B;
+ $('sa').textContent=(s>0?"⊙ 出紙面":"⊗ 入紙面")+"／"+(s>0?"↑ 向上":"↓ 向下");
+ $('sc').textContent=(s>0?"⊗ 入紙面":"⊙ 出紙面")+"／"+(s>0?"↓ 向下":"↑ 向上");
+ $('fv').textContent=F.toFixed(2)+" N";
+ $('tv').textContent=(Math.abs(tau)<tmax*.03?"0":Math.abs(tau).toFixed(3)+" N·m "+(tau>0?"逆時針":"順時針"));
+ if(document.activeElement!==$('ph'))$('ph').value=pd;
+}
+function torq(p){const co=Math.cos(p);return N*(+$('B').value)*(+$('I').value)*A*($('comm').checked?Math.abs(co):co)}
+function loop(t){if(play&&last){const dt=Math.min((t-last)/1000,.05),n=Math.ceil(dt/.004),hs=dt/n,J=0.01,bd=+$('sp').value;for(let k=0;k<n;k++){omega+=(torq(phi)-bd*omega)/J*hs;phi+=omega*hs}}last=t;draw();requestAnimationFrame(loop)}
+$('pl').onclick=()=>{play=!play;$('pl').textContent=play?"暫停":"播放"};
+$('rs').onclick=()=>{phi=Math.PI/6;omega=0;play=true;$('pl').textContent="暫停"};
+$('ph').oninput=e=>{play=false;$('pl').textContent="播放";phi=e.target.value*Math.PI/180;omega=0};
+requestAnimationFrame(loop);
+</script></body></html>
